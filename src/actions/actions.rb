@@ -1,9 +1,9 @@
 module Actions
-    def self.move_snake()
+    def self.move_snake(state)
         next_direction = state.next_direction
         next_position = calc_next_position(state)
 
-        if next_position_is_valid?(state, next_position)
+        if position_is_valid?(state, next_position)
             move_snake_to(state, next_position)
         else
         end_game(state)
@@ -12,29 +12,41 @@ module Actions
 
     private
 
-    def calc_next_position(state)    
-        current_position = state.snake.positions.first
+    def self.calc_next_position(state)    
+        curr_position = state.snake.positions.first
         case state.next_direction
-        when UP
-            return Model::Coord.new (current_position.row -1, current_position.col) 
-        when RIGHT
-            return Model::Coord.new (current_position.row, current_position.col +1) 
-        when DOWN
-            return Model::Coord.new (current_position.row +1, current_position.col ) 
-        when LEFT
-            return Model::Coord.new (current_position.row, current_position.col -1) 
+        when Model::Direction::UP
+            #decrementar la fila
+            return Model::Coord.new(
+              curr_position.row-1,
+              curr_position.col)
+          when Model::Direction::RIGHT
+            #incrementar la col
+            return Model::Coord.new(
+              curr_position.row,
+              curr_position.col+1)
+          when Model::Direction::DOWN
+            #incrementar la fila
+            return Model::Coord.new(
+              curr_position.row+1,
+              curr_position.col)
+          when Model::Direction::LEFT
+            #decrementar la col
+            return Model::Coord.new(
+              curr_position.row,
+              curr_position.col-1)
         end
     end
 
-    def next_position_is_valid?(state, position)
+    def self.position_is_valid?(state, position)
       is_invalid = ((position.row >= state.grid.rows || position.row < 0) ||
         (position.col >= state.grid.cols || position.col < 0))
        return false if is_invalid 
 
-       return !(state.snake.position.include? position)
+       return !(state.snake.positions.include? position)
     end
 
-    def move_snake_to(state, next_position)
+    def self.move_snake_to(state, next_position)
         new_positions = [next_position] + state.snake.positions[0...-1]
         state.snake.positions = new_positions
         state
