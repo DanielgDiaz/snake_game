@@ -16,3 +16,6 @@ class App
         end
     end
 end
+
+app = App.new
+app.start
